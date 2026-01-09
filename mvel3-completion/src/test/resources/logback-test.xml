@@ -7,6 +7,7 @@
     </appender>
 
     <logger name="org.mvel3" level="DEBUG" />
+    <logger name="com.vmware.antlr4c3" level="TRACE" />
     <logger name="org.eclipse" level="INFO" />
     <logger name="ch.qos.logback" level="WARN" />
 

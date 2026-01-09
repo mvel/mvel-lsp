@@ -17,7 +17,7 @@ class Mvel3CompletionHelperIncompleteCodeTest {
         Position caretPosition = new Position(0, 0);
 
         List<CompletionItem> result = Mvel3CompletionHelper.getCompletionItems(text, caretPosition);
-        assertThat(completionItemStrings(result)).contains("package", "import", "class");
+        assertThat(completionItemStrings(result)).contains("var", "int", "return");
     }
 
     @Test

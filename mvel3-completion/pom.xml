@@ -60,4 +60,15 @@
 
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>-Djava.util.logging.config.file=src/test/resources/logging.properties</argLine>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

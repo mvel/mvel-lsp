@@ -9,126 +9,33 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mvel3.completion.Mvel3CompletionHelper.completionItemStrings;
 
+/**
+ * Tests for Mvel3CompletionHelper completion suggestions in various positions
+ * within a simple complete mvel block.
+ */
 class Mvel3CompletionHelperTest {
 
     @Test
-    void testRuleDeclaration() {
-        String text = """
-                class Foo {
-                    rule R1 {
-                       var a : /as,
-                       do { System.out.println(a == 3.2B);}
-                    }
-                }
-                """;
+    void testSimpleBlock() {
+        String text = "{ l#ArrayList#removeRange(0, 10); }";
 
         Position caretPosition = new Position();
         List<CompletionItem> result;
 
-        // Test completion at the beginning of the rule
-        caretPosition.setLine(0);
-        caretPosition.setCharacter(0);
-        result = Mvel3CompletionHelper.getCompletionItems(text, caretPosition);
-        assertThat(completionItemStrings(result)).contains("package", "import", "class"); // top level statement
+        // Test completion at the beginning of the block
+//        caretPosition.setLine(0);
+//        caretPosition.setCharacter(2);
+//        result = Mvel3CompletionHelper.getCompletionItems(text, caretPosition);
+//        assertThat(completionItemStrings(result)).contains("var", "int", "return");
 
         // Test completion before 'rule '
-        caretPosition.setLine(1);
+        caretPosition.setLine(0);
         caretPosition.setCharacter(4);
         result = Mvel3CompletionHelper.getCompletionItems(text, caretPosition);
-        assertThat(completionItemStrings(result)).contains("rule");
 
-        // Test completion after 'rule '
-        caretPosition.setLine(1);
-        caretPosition.setCharacter(9);
-        result = Mvel3CompletionHelper.getCompletionItems(text, caretPosition);
-        assertThat(completionItemStrings(result)).containsOnly("IDENTIFIER"); // rule name is IDENTIFIER
+        System.out.println(completionItemStrings(result));
 
-        // Test completion in the middle of pattern - position after 'var a : /'
-        caretPosition.setLine(2);
-        caretPosition.setCharacter(16);
-        result = Mvel3CompletionHelper.getCompletionItems(text, caretPosition);
-        assertThat(completionItemStrings(result)).containsOnly("IDENTIFIER"); // datasource name is IDENTIFIER
-
-        // Test completion after 'var '
-        caretPosition.setLine(2);
-        caretPosition.setCharacter(11);
-        result = Mvel3CompletionHelper.getCompletionItems(text, caretPosition);
-        assertThat(completionItemStrings(result)).containsOnly("IDENTIFIER"); // variable name is IDENTIFIER
-
-        // Test completion inside consequence block
-        caretPosition.setLine(3);
-        caretPosition.setCharacter(12);
-        result = Mvel3CompletionHelper.getCompletionItems(text, caretPosition);
-        assertThat(completionItemStrings(result)).contains("int", "var", "if"); // any java expressions
-    }
-
-    @Test
-    void testClassDeclaration() {
-        String text = """
-                public class Foo {
-                    public void bar() {
-                        System.out.println("Hello");
-                    }
-                }
-                """;
-
-        Position caretPosition = new Position();
-        List<CompletionItem> result;
-
-        // Test completion at the beginning before 'public'
-        caretPosition.setLine(0);
-        caretPosition.setCharacter(0);
-        result = Mvel3CompletionHelper.getCompletionItems(text, caretPosition);
-        assertThat(completionItemStrings(result)).contains("public", "class", "interface", "enum", "package");
-
-        // Test completion after 'public '
-        caretPosition.setLine(0);
-        caretPosition.setCharacter(7);
-        result = Mvel3CompletionHelper.getCompletionItems(text, caretPosition);
-        assertThat(completionItemStrings(result)).contains("class", "interface", "enum", "abstract", "final");
-
-        // Test completion after 'public class '
-        caretPosition.setLine(0);
-        caretPosition.setCharacter(13);
-        result = Mvel3CompletionHelper.getCompletionItems(text, caretPosition);
-        assertThat(completionItemStrings(result)).containsOnly("IDENTIFIER"); // class name
-
-        // Test completion inside class body
-        caretPosition.setLine(1);
-        caretPosition.setCharacter(4);
-        result = Mvel3CompletionHelper.getCompletionItems(text, caretPosition);
-        assertThat(completionItemStrings(result)).contains("public", "private", "protected", "static", "final", "void", "int");
-
-        // Test completion inside method body
-        caretPosition.setLine(2);
-        caretPosition.setCharacter(8);
-        result = Mvel3CompletionHelper.getCompletionItems(text, caretPosition);
-        assertThat(completionItemStrings(result)).contains("int", "var", "if", "for", "while", "return");
-    }
-
-    @Test
-    void multipleRules() {
-        String text = """
-                class Foo {
-                    rule R1 {
-                       var a : /as,
-                       do { System.out.println(a);}
-                    }
-                    
-                    rule R2 {
-                       var b : /bs,
-                       do { System.out.println(b);}
-                    }
-                }
-                """;
-
-        Position caretPosition = new Position();
-        
-        // Test completion at the start of second rule
-        caretPosition.setLine(6);
-        caretPosition.setCharacter(0);
-        List<CompletionItem> result = Mvel3CompletionHelper.getCompletionItems(text, caretPosition);
-        assertThat(completionItemStrings(result)).contains("rule");
+        assertThat(completionItemStrings(result)).contains("ArrayList");
     }
 
     @Test

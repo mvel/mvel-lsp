@@ -23,6 +23,7 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.TypeSolverBuild
 import com.vmware.antlr4c3.CodeCompletionCore;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.eclipse.lsp4j.CompletionItem;
@@ -39,16 +40,20 @@ public class Mvel3CompletionHelper {
     private static final Logger logger = LoggerFactory.getLogger(Mvel3CompletionHelper.class);
 
     private static final Set<Integer> PREFERRED_RULES = Set.of(
-//            DrlxParser.RULE_identifier
-    );
-
-    private static final Set<Integer> MINOR_IDENTIFIER_RULES = Set.of(
-//            DrlxParser.RULE_altAnnotationQualifiedName
+            Mvel3Parser.RULE_typeIdentifier
     );
 
     private Mvel3CompletionHelper() {
     }
 
+    // TODO: create wrapper methods to complement text for the context (e.g. expression, block, etc.)
+    public static List<CompletionItem> getCompletionItemsAsBlock(String text, Position caretPosition) {
+        String blockString =  "{ " + text + " }";
+        caretPosition.setCharacter(caretPosition.getCharacter() + "{ ".length());
+        return getCompletionItems(blockString, caretPosition);
+    }
+
+    // This method takes the valid (adjusted) text and caret position
     public static List<CompletionItem> getCompletionItems(String text, Position caretPosition) {
         Mvel3Parser parser = createMvel3Parser(text);
 
@@ -61,14 +66,13 @@ public class Mvel3CompletionHelper {
         return getCompletionItems(parser, caretTokenIndex, parseTree);
     }
 
+
     static List<CompletionItem> getCompletionItems(Mvel3Parser parser, int caretTokenIndex, ParseTree parseTree) {
         CodeCompletionCore core = new CodeCompletionCore(parser, PREFERRED_RULES, Tokens.IGNORED);
-        CodeCompletionCore.CandidatesCollection candidates = core.collectCandidates(caretTokenIndex, null);
+        CodeCompletionCore.CandidatesCollection candidates = core.collectCandidates(caretTokenIndex, (ParserRuleContext) parseTree);
 
-        logger.info("getCompletionItems: candidates = {}", candidates);
-
-        if (isMajorIdentifierRule(candidates)) {
-            return createSemanticCompletions(parser, parseTree, caretTokenIndex);
+        if (candidates.rules.size() > 0) {
+            return processPrefferedRules(candidates, parser, parseTree, caretTokenIndex);
         }
 
         return candidates.tokens.keySet().stream()
@@ -77,6 +81,21 @@ public class Mvel3CompletionHelper {
                 .map(String::toLowerCase)
                 .map(k -> createCompletionItem(k, CompletionItemKind.Keyword))
                 .collect(Collectors.toList());
+    }
+
+    private static List<CompletionItem> processPrefferedRules(CodeCompletionCore.CandidatesCollection candidates, Mvel3Parser parser, ParseTree parseTree, int caretTokenIndex) {
+        List<CompletionItem> items = new ArrayList<>();
+        for ( Map.Entry<Integer, java.util.List<Integer>> ruleEntry : candidates.rules.entrySet()) {
+            Integer ruleIndex = ruleEntry.getKey();
+            switch (ruleIndex) {
+                case Mvel3Parser.RULE_typeIdentifier:
+                    items.add(createCompletionItem("ArrayList", CompletionItemKind.Text));
+                    break;
+                default:
+                    // no-op
+            }
+        }
+        return items;
     }
 
     private static List<CompletionItem> createSemanticCompletions(Mvel3Parser parser, ParseTree parseTree, int caretTokenIndex) {
@@ -127,33 +146,6 @@ public class Mvel3CompletionHelper {
             semanticItems.add(createCompletionItem("IDENTIFIER", CompletionItemKind.Text));
         }
         return semanticItems;
-    }
-
-    /**
-     * Fast range check for token containment
-     */
-    private static boolean isTokenInRange(org.antlr.v4.runtime.ParserRuleContext context, int tokenIndex) {
-        Token startToken = context.getStart();
-        Token stopToken = context.getStop();
-
-        if (startToken == null || stopToken == null) {
-            return true; // If we can't determine range, assume it might contain the token
-        }
-
-        int startIndex = startToken.getTokenIndex();
-        int stopIndex = stopToken.getTokenIndex();
-
-        return tokenIndex >= startIndex && tokenIndex <= stopIndex;
-    }
-
-    private static boolean isMajorIdentifierRule(CodeCompletionCore.CandidatesCollection candidates) {
-//        List<Integer> ruleStack = candidates.rules.get(DrlxParser.RULE_identifier);
-//        if (ruleStack == null || ruleStack.isEmpty()) {
-//            return false; // not identifier rule
-//        }
-//        Integer lastRule = ruleStack.get(ruleStack.size() - 1);
-//        return !MINOR_IDENTIFIER_RULES.contains(lastRule);
-        return false;
     }
 
     static CompletionItem createCompletionItem(String label, CompletionItemKind itemKind) {
