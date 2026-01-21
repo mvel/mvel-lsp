@@ -2,49 +2,40 @@
 
 ## 3.0.0-alpha (2026-01-21)
 
-### Major Dependency Upgrades
+### Breaking Changes
+- **VSCode**: Minimum version 1.75.0 (was 1.62.0)
+- **Node.js**: Minimum version 20.x (was 14.x)
+- **Import**: `vscode-languageclient` → `vscode-languageclient/node`
 
-#### Breaking Changes
-- **BREAKING**: Upgraded `vscode-languageclient` from 5.1.1 to 9.0.1
-  - Import path changed from `vscode-languageclient` to `vscode-languageclient/node`
-  - Minimum VSCode version now **1.75.0** (was 1.62.0)
-  - Users must upgrade to VSCode 1.75.0 or later
-- **BREAKING**: Upgraded TypeScript from 4.4.4 to 5.3.0
-- **BREAKING**: Minimum Node.js version now 18.x (was 14.x)
+### Dependency Updates
 
-#### Updated Dependencies
-- `@types/vscode`: 1.62.0 → 1.75.0
-- `@types/node`: 14.x → 18.x
-- `@types/glob`: 7.1.4 → 8.1.0
-- `@types/mocha`: 9.0.0 → 10.0.0
-- `@typescript-eslint/eslint-plugin`: 5.1.0 → 6.0.0
-- `@typescript-eslint/parser`: 5.1.0 → 6.0.0
-- `@vscode/test-electron`: 1.6.2 → 2.3.0
-- `@vscode/vsce`: 2.19.0 → 3.7.1
-- `eslint`: 8.1.0 → 8.50.0
-- `glob`: 7.1.7 → 10.3.0
-- `typescript`: 4.4.4 → 5.3.0
+**Major:**
+- vscode-languageclient: 5.1.1 → 9.0.1
+- TypeScript: 4.4.4 → 5.3.0
+- @typescript-eslint: 5.1.0 → 8.0.0
+- eslint: 8.1.0 → 9.0.0 (new flat config)
+- glob: 7.1.7 → 11.0.0
+
+**Minor:**
+- @types/vscode: 1.62.0 → 1.75.0
+- @types/node: 14.x → 20.x
+- @types/glob: 7.1.4 → 8.1.0
+- @types/mocha: 9.0.0 → 10.0.0
+- @vscode/test-electron: 1.6.2 → 2.3.0
+- @vscode/vsce: 2.19.0 → 3.7.1
+- mocha: 9.x → 11.2.2
 
 ### Improvements
-- Better TypeScript type safety with TypeScript 5.3
-- Improved LSP protocol support (LSP 3.17+)
-- Modern VSCode API compatibility
+- Modern LSP protocol support (3.17+)
+- Better TypeScript 5.3 type safety
+- Improved linting with ESLint 9 flat config
 - Enhanced performance and stability
-- Security updates for all dependencies
+- Security updates
 
-### Technical Changes
-- Updated import path for vscode-languageclient
-- Added `skipLibCheck` to tsconfig for better build performance
-- Updated glob API usage to promise-based pattern
-- Improved module resolution configuration
-
-### Migration Guide
-- **For Users**: Upgrade to VSCode 1.75.0 or later before installing this version
-- **For Developers**:
-  - Use Node.js 18.x or later
-  - Update imports: `vscode-languageclient` → `vscode-languageclient/node`
-  - No changes required for existing .mvel files
-  - Extension functionality remains the same
+### Migration
+- **Users**: Upgrade VSCode to 1.75.0+
+- **Developers**: Use Node.js 20.x, update imports if needed
+- **Files**: No changes to .mvel files required
 
 ## 3.0.0-alpha (Development Build)
 
