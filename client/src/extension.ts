@@ -8,7 +8,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 
 // Import the language client, language client options and server options from VSCode language client.
-import {LanguageClient, LanguageClientOptions, ServerOptions, StreamInfo} from 'vscode-languageclient';
+import {LanguageClient, LanguageClientOptions, ServerOptions, StreamInfo} from 'vscode-languageclient/node';
 import * as net from "net";
 
 export function activate(context: vscode.ExtensionContext) {
@@ -76,10 +76,12 @@ export function activate(context: vscode.ExtensionContext) {
         };
         // Create the language client and start the client.
         let languageClient: LanguageClient = new LanguageClient('Mvel3', 'MVel3 Language Server', serverOptions, clientOptions);
-        let disposable = languageClient.start();
-
-        // Disposables to remove on deactivation.
-        context.subscriptions.push(disposable);
+        
+        // Start the client - this returns a Disposable
+        languageClient.start();
+        
+        // Add the language client itself to subscriptions for proper cleanup
+        context.subscriptions.push(languageClient);
 
         console.log('Congratulations, your extension "mvel" is now active!');
     }
