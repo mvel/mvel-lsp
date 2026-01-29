@@ -50,4 +50,28 @@ class Mvel3CompletionHelperIncompleteCodeTest {
 
         assertThat(completionItemStrings(result)).contains("trimToSize");
     }
+
+    @Test
+    void incompleteClass_PropertyAccessor() {
+        Mvel3CompletionHelper helper = new Mvel3CompletionHelper();
+
+        String text = """
+                import org.mvel3.domain.Person;
+                import org.mvel3.domain.Address;
+                
+                class Foo {
+                    void work() {
+                        Person p = new Person("John", new Address("Tokyo"));
+                        p.address.
+                """;
+
+        Position caretPosition = new Position();
+        List<CompletionItem> result;
+
+        // Test completion after 'p.address.'
+        caretPosition.setLine(6);
+        caretPosition.setCharacter(18);
+        result = helper.getCompletionItems(text, caretPosition);
+        assertThat(completionItemStrings(result)).contains("city", "getCity", "setCity"); // `city` can be directly accessed in mvel
+    }
 }

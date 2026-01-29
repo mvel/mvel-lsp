@@ -310,7 +310,7 @@ public class Mvel3CompletionHelper {
         Set<CompletionItem> propertyNames = items.stream()
                 .filter(item -> item.getKind() == CompletionItemKind.Method)
                 .map(CompletionItem::getInsertText)
-                .filter(name -> name.startsWith("get") || name.startsWith("is"))
+                .filter(name -> name.startsWith("get") && name.length() > 3 || name.startsWith("is") && name.length() > 2)
                 .map(name -> {
                     if (name.startsWith("get")) {
                         return name.substring(3, 4).toLowerCase() + name.substring(4);
