@@ -23,7 +23,7 @@ import com.github.javaparser.symbolsolver.reflectionmodel.ReflectionFieldDeclara
 import com.github.javaparser.symbolsolver.reflectionmodel.ReflectionMethodDeclaration;
 import com.github.javaparser.symbolsolver.resolution.typesolvers.TypeSolverBuilder;
 import com.vmware.antlr4c3.CodeCompletionCore;
-import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
@@ -54,7 +54,7 @@ public class Mvel3CompletionHelper {
             """
                     package org.mvel3;
                     
-                    public class GeneratorEvaluaor__ {
+                    public class GeneratorEvaluator__ {
                         public void eval(java.util.Map __context) {
                             java.util.List l = (java.util.List) __context.get("l");
                             %s
@@ -235,7 +235,7 @@ public class Mvel3CompletionHelper {
     }
 
     private static Mvel3Parser createMvel3Parser(String text) {
-        ANTLRInputStream input = new ANTLRInputStream(text);
+        var input = CharStreams.fromString(text);
         Mvel3Lexer lexer = new Mvel3Lexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         return new Mvel3Parser(tokens);
@@ -299,7 +299,7 @@ public class Mvel3CompletionHelper {
             }
         } catch (Exception e) {
             // Handle resolution errors gracefully
-            System.err.println("Error resolving type members: " + e.getMessage());
+            logger.error("Error resolving type members: {}", e.getMessage(), e);
         }
 
         return items;
@@ -310,7 +310,7 @@ public class Mvel3CompletionHelper {
         Set<CompletionItem> propertyNames = items.stream()
                 .filter(item -> item.getKind() == CompletionItemKind.Method)
                 .map(CompletionItem::getInsertText)
-                .filter(name -> name.startsWith("get") || name.startsWith("is"))
+                .filter(name -> name.startsWith("get") && name.length() > 3 || name.startsWith("is") && name.length() > 2)
                 .map(name -> {
                     if (name.startsWith("get")) {
                         return name.substring(3, 4).toLowerCase() + name.substring(4);
