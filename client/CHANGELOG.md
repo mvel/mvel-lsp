@@ -1,6 +1,6 @@
 # Change Log for client
 
-## 3.0.0-alpha (2026-01-21)
+## 3.0.0-alpha1 (2026-01-21)
 
 ### Breaking Changes
 - **VSCode**: Minimum version 1.75.0 (was 1.62.0)
@@ -37,6 +37,6 @@
 - **Developers**: Use Node.js 20.x, update imports if needed
 - **Files**: No changes to .mvel files required
 
-## 3.0.0-alpha (Development Build)
+## 3.0.0-alpha1 (Development Build)
 
 - This is an alpha SNAPSHOT release, so the latest alpha will include all the latest changes.
