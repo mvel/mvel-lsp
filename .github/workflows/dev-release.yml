@@ -20,6 +20,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: 'maven'
 
       - name: Set up Maven
         uses: stCarolas/setup-maven@v5
@@ -34,11 +35,19 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 20.x
+          cache: 'npm'
+          cache-dependency-path: client/package-lock.json
+
+      - run: npm install
+        working-directory: ./client
+
+      - name: Extension E2E Test
+        run: xvfb-run -a npm test
+        working-directory: ./client
 
       - name: Package VS Code Extension
         working-directory: ./client
         run: |
-          npm install
           npm run pack:dev
           cp dist/*.vsix ../staging/
 

@@ -34,6 +34,7 @@ jobs:
         with:
           java-version: ${{ matrix.java-version }}
           distribution: 'temurin'
+          cache: 'maven'
 
       - name: Maven Setup
         uses: stCarolas/setup-maven@v5
@@ -47,6 +48,8 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 20.x
+          cache: 'npm'
+          cache-dependency-path: client/package-lock.json
 
       - run: npm install
         working-directory: ./client
