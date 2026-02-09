@@ -1,0 +1,67 @@
+name: Mvel LSP
+
+on:
+  pull_request:
+    paths-ignore:
+      - 'LICENSE'
+      - '**/.gitignore'
+      - '**.md'
+      - '**.adoc'
+      - '*.txt'
+      - 'docsimg/**'
+      - '.ci/jenkins/**'
+
+jobs:
+  mvel-lsp-build:
+    concurrency:
+      group: mvel-lsp-${{ matrix.os }}_pr-${{ github.head_ref }}
+      cancel-in-progress: true
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+        java-version: [17]
+        maven-version: ['3.8.6']
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.os }} - Java ${{ matrix.java-version }} - Maven
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Java Setup
+        uses: actions/setup-java@v5
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: 'temurin'
+
+      - name: Maven Setup
+        uses: stCarolas/setup-maven@v5
+        with:
+          maven-version: ${{ matrix.maven-version }}
+
+      - name: Build with Maven
+        run: mvn -B clean install
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20.x
+
+      - run: npm install
+        working-directory: ./client
+
+      - name: Extension E2E Test for Linux
+        run: xvfb-run -a npm test
+        working-directory: ./client
+        if: runner.os == 'Linux'
+
+      - name: Extension E2E Test for Windows
+        run: npm test
+        working-directory: ./client
+        if: runner.os == 'Windows'
+
+      - name: Extension E2E Test for MacOS
+        run: GHA_JAVA_HOME=$JAVA_HOME npm test
+        working-directory: ./client
+        if: runner.os == 'macOS'
