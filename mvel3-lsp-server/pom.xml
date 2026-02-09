@@ -105,8 +105,8 @@
                         <configuration>
                             <target>
                                 <mkdir dir="${project.basedir}/../client/lib" />
-                                <copy file="${project.build.directory}/${project.artifactId}-${project.version}-jar-with-dependencies.jar"
-                                      tofile="${project.basedir}/../client/lib/mvel3-lsp-server-jar-with-dependencies.jar"
+                                <copy file="${project.build.directory}/${project.artifactId}-jar-with-dependencies.jar"
+                                      tofile="${project.basedir}/../client/lib/${project.artifactId}-jar-with-dependencies.jar"
                                       overwrite="true" />
                                 <echo message="Copied JAR to client/lib directory" />
                             </target>
