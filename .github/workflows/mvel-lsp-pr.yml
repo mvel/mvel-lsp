@@ -21,7 +21,7 @@ jobs:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
         java-version: [17]
-        maven-version: ['3.8.6']
+        maven-version: ['3.9.12']
       fail-fast: false
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.os }} - Java ${{ matrix.java-version }} - Maven
@@ -40,6 +40,17 @@ jobs:
         uses: stCarolas/setup-maven@v5
         with:
           maven-version: ${{ matrix.maven-version }}
+
+      - name: Checkout mvel/mvel main branch
+        uses: actions/checkout@v6
+        with:
+          repository: mvel/mvel
+          ref: main
+          path: mvel
+
+      - name: Build mvel/mvel main branch
+        run: mvn -B clean install -DskipTests
+        working-directory: ./mvel
 
       - name: Build with Maven
         run: mvn -B clean install

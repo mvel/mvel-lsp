@@ -1,14 +1,5 @@
 package org.mvel3.completion;
 
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import com.github.javaparser.ast.AccessSpecifier;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
@@ -34,9 +25,18 @@ import org.eclipse.lsp4j.Position;
 import org.mvel3.parser.antlr4.Mvel3Lexer;
 import org.mvel3.parser.antlr4.Mvel3Parser;
 import org.mvel3.parser.antlr4.Mvel3ParserBaseVisitor;
-import org.mvel3.parser.antlr4.TolerantMvel3ToJavaParserVisitor;
+import org.mvel3.parser.antlr4.Mvel3ToJavaParserVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Mvel3CompletionHelper {
 
@@ -192,7 +192,7 @@ public class Mvel3CompletionHelper {
             // Let's assume the user is typing a method or field access
             int scopeTokenIndex = previousTokenIndex - 1;
 
-            TolerantMvel3ToJavaParserVisitor visitor = new TolerantMvel3ToJavaParserVisitor();
+            Mvel3ToJavaParserVisitor visitor = new Mvel3ToJavaParserVisitor(true);
             CompilationUnit compilationUnit = (CompilationUnit) visitor.visit(parseTree);
 
             // We can adjust the paths for the vscode project where the user is working (e.g. dependencies by pom.xml)
