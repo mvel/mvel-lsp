@@ -14,7 +14,7 @@ on:
 jobs:
   mvel-lsp-build:
     concurrency:
-      group: mvel-lsp-${{ matrix.os }}_pr-${{ github.head_ref }}
+      group: mven-lsp-${{ matrix.os }}-${{ matrix.java-version }}-${{ github.head_ref }}
       cancel-in-progress: true
     timeout-minutes: 30
     strategy:
