@@ -14,13 +14,13 @@ on:
 jobs:
   mvel-lsp-build:
     concurrency:
-      group: mvel-lsp-${{ matrix.os }}_pr-${{ github.head_ref }}
+      group: mven-lsp-${{ matrix.os }}-${{ matrix.java-version }}-${{ github.head_ref }}
       cancel-in-progress: true
     timeout-minutes: 30
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
-        java-version: [17]
+        java-version: [17, 21]
         maven-version: ['3.9.12']
       fail-fast: false
     runs-on: ${{ matrix.os }}
@@ -58,7 +58,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 20.x
+          node-version: 24.x
           cache: 'npm'
           cache-dependency-path: client/package-lock.json
 
